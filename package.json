@@ -1,0 +1,47 @@
+{
+    "name": "jsn-test-task",
+    "private": "true",
+    "engines": {
+        "node": "20.x.x",
+        "npm": ">=10.x.x"
+    },
+    "workspaces": [
+        "shared",
+        "backend",
+        "frontend"
+    ],
+    "scripts": {
+        "install:all": "npm i && npm run build:shared",
+        "build:shared": "npm run build -w shared",
+        "build:frontend": "npm run build -w frontend",
+        "build:backend": "npm run build -w backend",
+        "build": "npm run build:shared && npm run build:backend && npm run build:frontend && npm run build:frontend && sh ./build.sh",
+        "lint:editor": "editorconfig-checker",
+        "lint:fs": "ls-lint",
+        "lint:type": "npm run lint:type --workspaces --if-present",
+        "lint:js": "npm run lint:js --workspaces --if-present -- --max-warnings=0",
+        "lint:css": "npm run lint:css --workspaces --if-present",
+        "lint:format": "prettier --check \"**/*.{ts,tsx,json,md,css,html,yml}\"",
+        "lint": "npm run lint:editor && npm run lint:fs && npm run lint:format && npm run lint:type && npm run lint:js && npm run lint:css",
+        "format": "prettier --write \"**/*.{ts,tsx,json,md,css,html,yml}\"",
+        "prestart": "npm install --include=dev && npm run build",
+        "start": "cd ./build/backend && npm run start"
+    },
+    "devDependencies": {
+        "@ls-lint/ls-lint": "2.2.3",
+        "@typescript-eslint/eslint-plugin": "6.19.1",
+        "editorconfig-checker": "6.0.0",
+        "eslint": "8.57.1",
+        "eslint-plugin-import": "2.31.0",
+        "eslint-plugin-simple-import-sort": "12.1.1",
+        "eslint-plugin-sonarjs": "0.23.0",
+        "eslint-plugin-unicorn": "50.0.1",
+        "lint-staged": "15.2.10",
+        "prettier": "3.3.3",
+        "stylelint": "16.10.0",
+        "stylelint-config-standard": "36.0.1",
+        "stylelint-order": "6.0.4",
+        "tsc-alias": "1.8.10",
+        "typescript": "5.3.3"
+    }
+}

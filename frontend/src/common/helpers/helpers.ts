@@ -1,0 +1,1 @@
+export { configureUrlString } from 'shared';
