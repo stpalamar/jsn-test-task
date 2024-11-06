@@ -1,13 +1,27 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import express from 'express';
+import bodyParser from 'body-parser';
+import express, {
+    type NextFunction,
+    type Request,
+    type Response,
+} from 'express';
+import { ZodError } from 'zod';
 
+import { type Config } from '~/common/config/config.js';
 import { type Database } from '~/common/database/database.js';
+import { ServerErrorType } from '~/common/enums/enums.js';
+import { HttpError } from '~/common/exceptions/exceptions.js';
 import { getHttpMethodFunction } from '~/common/helpers/helpers.js';
 import { type Logger } from '~/common/logger/logger.js';
+import { zodValidate } from '~/common/middlewares/middlewares.js';
+import {
+    type ServerCommonErrorResponse,
+    type ServerValidationErrorResponse,
+} from '~/common/types/types.js';
 
-import { type Config } from '../config/config.js';
+import { HttpCode } from '../http/http.js';
 import {
     type ServerApp,
     type ServerAppApi,
@@ -42,9 +56,25 @@ class BaseServerApp implements ServerApp {
     }
 
     public addRoute(parameters: ServerAppRouteParameters): void {
-        const { path, method, handler } = parameters;
+        const { path, method, handler, validation } = parameters;
 
-        this.app[getHttpMethodFunction(method)](path, handler);
+        const validationMiddlewares = [
+            ...(validation && validation.body
+                ? [zodValidate(validation.body, 'body')]
+                : []),
+            ...(validation && validation.params
+                ? [zodValidate(validation.params, 'params')]
+                : []),
+            ...(validation && validation.query
+                ? [zodValidate(validation.query, 'query')]
+                : []),
+        ];
+
+        this.app[getHttpMethodFunction(method)](
+            path,
+            validationMiddlewares,
+            handler,
+        );
 
         this.logger.info(`Route added: ${method.toUpperCase()} ${path}`);
     }
@@ -70,11 +100,70 @@ class BaseServerApp implements ServerApp {
         this.app.use(express.static(staticPath));
     }
 
+    private initErrorHandler(): void {
+        this.app.use(
+            (
+                error: Error,
+                _request: Request,
+                response: Response,
+                _next: NextFunction,
+            ) => {
+                if (error instanceof ZodError) {
+                    this.logger.error(`[Validation Error]: ${error}`);
+
+                    const responseBody: ServerValidationErrorResponse = {
+                        errorType: ServerErrorType.VALIDATION,
+                        details: error.issues.map((issue) => ({
+                            message: issue.message,
+                            path: issue.path,
+                        })),
+                        message: 'Request body is not valid',
+                    };
+
+                    return response
+                        .status(HttpCode.UNPROCESSED_CONTENT)
+                        .json(responseBody);
+                }
+
+                if (error instanceof HttpError) {
+                    this.logger.error(
+                        `[Http Error]: ${error.status.toString()} - ${error.message}`,
+                    );
+
+                    const responseBody: ServerCommonErrorResponse = {
+                        errorType: ServerErrorType.COMMON,
+                        message: error.message,
+                    };
+
+                    return response.status(error.status).json(responseBody);
+                }
+
+                this.logger.error(`[Internal Server Error]: ${error.message}`);
+                const responseBody: ServerCommonErrorResponse = {
+                    errorType: ServerErrorType.COMMON,
+                    message: 'Internal Server Error',
+                };
+                return response
+                    .status(HttpCode.INTERNAL_SERVER_ERROR)
+                    .json(responseBody);
+            },
+        );
+    }
+
+    private initMiddlewares(): void {
+        this.app.use(bodyParser.json());
+    }
+
     public init(): void {
         this.logger.info('Server initialization started');
 
         this.initServe();
+
+        this.initMiddlewares();
+
         this.initRoutes();
+
+        this.initErrorHandler();
 
         this.database.connect();
 

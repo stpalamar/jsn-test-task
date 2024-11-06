@@ -28,8 +28,8 @@ class BaseController implements Controller {
         this.routes.push({
             ...options,
             path: fullPath,
-            handler: (request, response) =>
-                this.mapHandler(handler, request, response),
+            handler: (request, response, next) =>
+                this.mapHandler(handler, request, response, next),
         });
     }
 
@@ -37,16 +37,19 @@ class BaseController implements Controller {
         handler: ApiHandler,
         request: Parameters<ServerAppRouteParameters['handler']>[0],
         response: Parameters<ServerAppRouteParameters['handler']>[1],
+        next: Parameters<ServerAppRouteParameters['handler']>[2],
     ): Promise<void> {
         this.logger.info(`${request.method.toUpperCase()} on ${request.url}`);
 
         const handlerOptions = this.mapRequest(request);
 
-        const apiHandlerResponse = await handler(handlerOptions);
-
-        const { status, payload } = apiHandlerResponse;
-
-        response.status(status).send(payload);
+        try {
+            const apiHandlerResponse = await handler(handlerOptions);
+            const { status, payload } = apiHandlerResponse;
+            response.status(status).send(payload);
+        } catch (error) {
+            next(error);
+        }
     }
 
     private mapRequest(

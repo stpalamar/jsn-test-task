@@ -41,7 +41,7 @@ rules:
         - error
     max-params:
         - error
-        - 3
+        - 4
     no-multiple-empty-lines:
         - error
         - max: 1
@@ -114,4 +114,9 @@ rules:
     '@typescript-eslint/no-unsafe-argument':
         - off
     '@typescript-eslint/restrict-template-expressions':
+        - off
+    '@typescript-eslint/no-unused-vars':
+        - error
+        - argsIgnorePattern: ^_
+    '@typescript-eslint/no-misused-promises':
         - off

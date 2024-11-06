@@ -12,9 +12,15 @@
         "start:dev": "nodemon --exec tsx src/index.ts",
         "build": "tsc && tsc-alias -p tsconfig.json && npm run build:copy",
         "build:copy": "cp -r package.json build",
-        "start": "node ./src/index.js"
+        "start": "node ./src/index.js",
+        "knex": "cross-env NODE_OPTIONS=\"--loader ts-paths-esm-loader\" knex",
+        "migrate:dev": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js migrate:latest",
+        "migrate:dev:make": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js migrate:make -x ts",
+        "migrate:dev:down": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js migrate:down",
+        "migrate:dev:rollback": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js migrate:rollback --all"
     },
     "dependencies": {
+        "body-parser": "1.20.3",
         "convict": "6.2.4",
         "dotenv": "16.4.5",
         "express": "4.21.1",
@@ -22,12 +28,15 @@
         "objection": "3.1.5",
         "pg": "8.13.1",
         "pino": "9.5.0",
-        "pino-pretty": "11.3.0"
+        "pino-pretty": "11.3.0",
+        "zod": "3.23.8"
     },
     "devDependencies": {
         "@types/convict": "6.1.6",
-        "@types/express": "5.0.0",
+        "@types/express": "4.17.21",
+        "cross-env": "7.0.3",
         "nodemon": "3.1.7",
+        "ts-paths-esm-loader": "1.4.3",
         "tsx": "4.19.2"
     }
 }
