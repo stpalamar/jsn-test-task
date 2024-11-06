@@ -17,7 +17,9 @@
         "migrate:dev": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js migrate:latest",
         "migrate:dev:make": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js migrate:make -x ts",
         "migrate:dev:down": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js migrate:down",
-        "migrate:dev:rollback": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js migrate:rollback --all"
+        "migrate:dev:rollback": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js migrate:rollback --all",
+        "seed:dev:make": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js seed:make -x ts",
+        "seed:dev:run": "node --loader ts-paths-esm-loader ../node_modules/knex/bin/cli.js seed:run"
     },
     "dependencies": {
         "body-parser": "1.20.3",
