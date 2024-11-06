@@ -1,6 +1,10 @@
 import { HttpError } from '~/common/exceptions/exceptions.js';
 import { HttpCode } from '~/common/http/http.js';
-import { type Service } from '~/common/types/types.js';
+import {
+    type Paged,
+    type PaginationParameters,
+    type Service,
+} from '~/common/types/types.js';
 
 import { ErrorMessage } from './enums/enums.js';
 import { SuperheroEntity, type SuperheroRepository } from './superheroes.js';
@@ -33,11 +37,24 @@ class SuperheroService implements Service {
 
     public async findAll(
         query: Record<string, unknown>,
-    ): Promise<{ items: SuperheroResponseDto[] }> {
-        const items = await this.superheroRepository.findAll(query);
+        pagination: PaginationParameters,
+    ): Promise<Paged<SuperheroResponseDto>> {
+        const { page = 1, limit = 5 } = pagination;
+        const offset = (Number(page) - 1) * Number(limit);
+
+        const items = await this.superheroRepository.findAll(
+            query,
+            offset,
+            limit,
+        );
+
+        const total = await this.superheroRepository.count(query);
 
         return {
             items: items.map((item) => item.toObject()),
+            page: Number(page),
+            total: total,
+            totalPages: Math.ceil(total / Number(limit)),
         };
     }
 

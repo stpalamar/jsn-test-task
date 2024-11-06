@@ -1,0 +1,1 @@
+export { paginationValidationSchema } from 'shared';

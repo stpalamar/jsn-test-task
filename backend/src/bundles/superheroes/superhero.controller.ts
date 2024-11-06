@@ -6,6 +6,8 @@ import {
 import { ApiPath } from '~/common/enums/enums.js';
 import { HttpCode } from '~/common/http/http.js';
 import { type Logger } from '~/common/logger/logger.js';
+import { type PaginationParameters } from '~/common/types/types.js';
+import { paginationValidationSchema } from '~/common/validation-schemas/validation-schemas.js';
 
 import { SuperheroesApiPath } from './enums/enums.js';
 import { type SuperheroService } from './superheroes.js';
@@ -26,7 +28,15 @@ class SuperheroController extends BaseController {
         this.addRoute({
             path: SuperheroesApiPath.ROOT,
             method: 'GET',
-            handler: () => this.findAll(),
+            validation: {
+                query: paginationValidationSchema,
+            },
+            handler: (options) =>
+                this.findAll(
+                    options as ApiHandlerOptions<{
+                        query: PaginationParameters;
+                    }>,
+                ),
         });
 
         this.addRoute({
@@ -94,10 +104,16 @@ class SuperheroController extends BaseController {
         };
     }
 
-    private async findAll(): Promise<ApiHandlerResponse> {
+    private async findAll(
+        options: ApiHandlerOptions<{
+            query: PaginationParameters;
+        }>,
+    ): Promise<ApiHandlerResponse> {
+        const { query } = options;
+
         return {
             status: HttpCode.OK,
-            payload: await this.superheroService.findAll({}),
+            payload: await this.superheroService.findAll({}, query),
         };
     }
 

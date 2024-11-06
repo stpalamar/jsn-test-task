@@ -26,6 +26,8 @@ export {
 } from './framework/http/http.js';
 export { configureUrlString } from './helpers/helpers.js';
 export {
+    type Paged,
+    type PaginationParameters,
     type ServerCommonErrorResponse,
     type ServerErrorDetail,
     type ServerErrorResponse,
@@ -33,3 +35,4 @@ export {
     type ValidationSchema,
     type ValueOf,
 } from './types/types.js';
+export { paginationValidationSchema } from './validation-schemas/validation-schemas.js';

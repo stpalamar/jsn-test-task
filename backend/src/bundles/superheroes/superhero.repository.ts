@@ -28,15 +28,30 @@ class SuperheroRepository implements Repository {
 
     public async findAll(
         query: Record<string, unknown>,
+        offset: number,
+        limit: number,
     ): Promise<SuperheroEntity[]> {
         const superheroes = await this.superheroModel
             .query()
             .where(query)
+            .offset(offset)
+            .limit(limit)
             .execute();
 
         return superheroes.map((superhero) =>
             SuperheroEntity.initialize({ ...superhero }),
         );
+    }
+
+    public async count(query: Record<string, unknown>): Promise<number> {
+        const result = (await this.superheroModel
+            .query()
+            .where(query)
+            .count()
+            .first()
+            .execute()) as unknown as { count: string };
+
+        return Number(result.count);
     }
 
     public async create(entity: SuperheroEntity): Promise<SuperheroEntity> {
