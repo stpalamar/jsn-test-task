@@ -1,5 +1,6 @@
 import { type Repository } from '~/common/types/types.js';
 
+import { ImageEntity } from '../images/images.js';
 import { SuperheroEntity, type SuperheroModel } from './superheroes.js';
 
 class SuperheroRepository implements Repository {
@@ -15,6 +16,7 @@ class SuperheroRepository implements Repository {
         const superhero = await this.superheroModel
             .query()
             .findOne(query)
+            .withGraphFetched('images')
             .execute();
 
         if (!superhero) {
@@ -23,6 +25,9 @@ class SuperheroRepository implements Repository {
 
         return SuperheroEntity.initialize({
             ...superhero,
+            images: superhero.images.map((image) =>
+                ImageEntity.initialize(image),
+            ),
         });
     }
 
@@ -34,13 +39,19 @@ class SuperheroRepository implements Repository {
         const superheroes = await this.superheroModel
             .query()
             .where(query)
+            .withGraphFetched('images')
             .offset(offset)
             .limit(limit)
             .execute();
 
-        return superheroes.map((superhero) =>
-            SuperheroEntity.initialize({ ...superhero }),
-        );
+        return superheroes.map((superhero) => {
+            return SuperheroEntity.initialize({
+                ...superhero,
+                images: superhero.images.map((image) =>
+                    ImageEntity.initialize(image),
+                ),
+            });
+        });
     }
 
     public async count(query: Record<string, unknown>): Promise<number> {
@@ -60,11 +71,15 @@ class SuperheroRepository implements Repository {
         const superhero = await this.superheroModel
             .query()
             .insert(data)
+            .withGraphFetched('images')
             .returning('*')
             .execute();
 
         return SuperheroEntity.initialize({
             ...superhero,
+            images: superhero.images.map((image) =>
+                ImageEntity.initialize(image),
+            ),
         });
     }
 
@@ -78,6 +93,7 @@ class SuperheroRepository implements Repository {
             .query()
             .update(data)
             .findOne(query)
+            .withGraphFetched('images')
             .returning('*')
             .execute();
 
@@ -87,6 +103,9 @@ class SuperheroRepository implements Repository {
 
         return SuperheroEntity.initialize({
             ...superhero,
+            images: superhero.images.map((image) =>
+                ImageEntity.initialize(image),
+            ),
         });
     }
 

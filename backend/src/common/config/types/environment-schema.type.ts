@@ -6,6 +6,7 @@ type EnvironmentSchema = {
         ENVIRONMENT: ValueOf<typeof AppEnvironment>;
         PORT: number;
         HOST: string;
+        BASE_URL: string;
     };
     DB: {
         USERNAME: string;

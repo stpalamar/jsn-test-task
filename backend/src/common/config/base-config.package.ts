@@ -36,6 +36,12 @@ class BaseConfig implements Config {
                     env: 'HOST',
                     default: null,
                 },
+                BASE_URL: {
+                    doc: 'Base api url for our app',
+                    format: String,
+                    env: 'BASE_URL',
+                    default: null,
+                },
             },
             DB: {
                 USERNAME: {

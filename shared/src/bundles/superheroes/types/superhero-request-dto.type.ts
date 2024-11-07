@@ -4,6 +4,7 @@ type SuperheroRequestDto = {
     originDescription: string;
     superpowers: string;
     catchPhrase: string;
+    imageFilenames: string[];
 };
 
 export { type SuperheroRequestDto };

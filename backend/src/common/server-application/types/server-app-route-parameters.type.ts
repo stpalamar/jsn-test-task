@@ -6,6 +6,11 @@ import { type ValidationSchema } from '~/common/types/types.js';
 type ServerAppRouteParameters = {
     path: string;
     method: HttpMethod;
+    preHandler?: (
+        request: Request,
+        response: Response,
+        next: NextFunction,
+    ) => Promise<void> | void;
     handler: (
         request: Request,
         response: Response,

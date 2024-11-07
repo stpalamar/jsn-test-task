@@ -5,6 +5,7 @@ type SuperheroResponseDto = {
     originDescription: string;
     superpowers: string;
     catchPhrase: string;
+    imageUrls: string[];
     createdAt: string;
     updatedAt: string;
 };

@@ -6,6 +6,8 @@ import {
 import { ApiPath } from '~/common/enums/enums.js';
 import { HttpCode } from '~/common/http/http.js';
 import { type Logger } from '~/common/logger/logger.js';
+import { upload } from '~/common/middlewares/middlewares.js';
+import { type File } from '~/common/services/file/types/types.js';
 import { type PaginationParameters } from '~/common/types/types.js';
 import { paginationValidationSchema } from '~/common/validation-schemas/validation-schemas.js';
 
@@ -89,6 +91,18 @@ class SuperheroController extends BaseController {
                     }>,
                 ),
         });
+
+        this.addRoute({
+            path: SuperheroesApiPath.UPLOAD_IMAGE,
+            method: 'POST',
+            preHandler: upload.single('file'),
+            handler: (options) =>
+                this.uploadImage(
+                    options as ApiHandlerOptions<{
+                        file: File;
+                    }>,
+                ),
+        });
     }
 
     private async find(
@@ -154,6 +168,16 @@ class SuperheroController extends BaseController {
         return {
             status: HttpCode.OK,
             payload: await this.superheroService.delete({ id }),
+        };
+    }
+
+    private uploadImage(
+        options: ApiHandlerOptions<{ file: File }>,
+    ): ApiHandlerResponse {
+        const { file } = options;
+        return {
+            status: HttpCode.OK,
+            payload: this.superheroService.uploadImage(file),
         };
     }
 }

@@ -1,6 +1,3 @@
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import bodyParser from 'body-parser';
 import express, {
     type NextFunction,
@@ -21,6 +18,7 @@ import {
     type ServerValidationErrorResponse,
 } from '~/common/types/types.js';
 
+import { staticPath } from '../constants/constants.js';
 import { HttpCode } from '../http/http.js';
 import {
     type ServerApp,
@@ -56,7 +54,7 @@ class BaseServerApp implements ServerApp {
     }
 
     public addRoute(parameters: ServerAppRouteParameters): void {
-        const { path, method, handler, validation } = parameters;
+        const { path, method, handler, validation, preHandler } = parameters;
 
         const validationMiddlewares = [
             ...(validation && validation.body
@@ -70,9 +68,12 @@ class BaseServerApp implements ServerApp {
                 : []),
         ];
 
+        const preHandlerMiddleware = [...(preHandler ? [preHandler] : [])];
+
         this.app[getHttpMethodFunction(method)](
             path,
             validationMiddlewares,
+            preHandlerMiddleware,
             handler,
         );
 
@@ -92,11 +93,6 @@ class BaseServerApp implements ServerApp {
     }
 
     private initServe(): void {
-        const staticPath = join(
-            dirname(fileURLToPath(import.meta.url)),
-            '../../../public',
-        );
-
         this.app.use(express.static(staticPath));
     }
 
@@ -106,7 +102,7 @@ class BaseServerApp implements ServerApp {
                 error: Error,
                 _request: Request,
                 response: Response,
-                _next: NextFunction,
+                next: NextFunction,
             ) => {
                 if (error instanceof ZodError) {
                     this.logger.error(`[Validation Error]: ${error}`);
@@ -138,14 +134,15 @@ class BaseServerApp implements ServerApp {
                     return response.status(error.status).json(responseBody);
                 }
 
-                this.logger.error(`[Internal Server Error]: ${error.message}`);
-                const responseBody: ServerCommonErrorResponse = {
-                    errorType: ServerErrorType.COMMON,
-                    message: 'Internal Server Error',
-                };
-                return response
-                    .status(HttpCode.INTERNAL_SERVER_ERROR)
-                    .json(responseBody);
+                // this.logger.error(`[Internal Server Error]: ${error.message}`);
+                // const responseBody: ServerCommonErrorResponse = {
+                //     errorType: ServerErrorType.COMMON,
+                //     message: 'Internal Server Error',
+                // };
+                // return response
+                //     .status(HttpCode.INTERNAL_SERVER_ERROR)
+                //     .json(responseBody);
+                next(error);
             },
         );
     }

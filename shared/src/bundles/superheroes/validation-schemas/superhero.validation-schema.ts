@@ -6,6 +6,7 @@ type SuperheroRequestValidationDto = {
     originDescription: z.ZodString;
     superpowers: z.ZodString;
     catchPhrase: z.ZodString;
+    imageFilenames: z.ZodArray<z.ZodString>;
 };
 
 const superheroValidationSchema = z.object<SuperheroRequestValidationDto>({
@@ -14,6 +15,7 @@ const superheroValidationSchema = z.object<SuperheroRequestValidationDto>({
     originDescription: z.string().min(1).max(255),
     superpowers: z.string().min(1).max(255),
     catchPhrase: z.string().min(1).max(255),
+    imageFilenames: z.array(z.string()),
 });
 
 const updateSuperheroValidationSchema = superheroValidationSchema.partial();

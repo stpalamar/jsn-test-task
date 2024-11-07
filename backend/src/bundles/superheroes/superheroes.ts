@@ -1,12 +1,18 @@
 import { logger } from '~/common/logger/logger.js';
+import { fileService } from '~/common/services/services.js';
 
+import { imageRepository } from '../images/images.js';
 import { SuperheroController } from './superhero.controller.js';
 import { SuperheroModel } from './superhero.model.js';
 import { SuperheroRepository } from './superhero.repository.js';
 import { SuperheroService } from './superhero.service.js';
 
 const superheroRepository = new SuperheroRepository(SuperheroModel);
-const superheroService = new SuperheroService(superheroRepository);
+const superheroService = new SuperheroService(
+    superheroRepository,
+    imageRepository,
+    fileService,
+);
 const superheroController = new SuperheroController(logger, superheroService);
 
 export { superheroController, superheroRepository, superheroService };

@@ -1,1 +1,5 @@
-export { type SuperheroRequestDto, type SuperheroResponseDto } from 'shared';
+export {
+    type SuperheroRequestDto,
+    type SuperheroResponseDto,
+    type UploadImageResponseDto,
+} from 'shared';

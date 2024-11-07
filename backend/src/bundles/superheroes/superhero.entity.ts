@@ -1,21 +1,25 @@
 import { type Entity } from '~/common/types/types.js';
 
+import { type ImageEntity } from '../images/image.entity.js';
+
 class SuperheroEntity implements Entity {
-    public 'id': number | null;
+    private 'id': number | null;
 
-    public 'nickname': string;
+    private 'nickname': string;
 
-    public 'realName': string;
+    private 'realName': string;
 
-    public 'originDescription': string;
+    private 'originDescription': string;
 
-    public 'superpowers': string;
+    private 'superpowers': string;
 
-    public 'catchPhrase': string;
+    private 'catchPhrase': string;
 
-    public 'createdAt': string | null;
+    private 'images': ImageEntity[];
 
-    public 'updatedAt': string | null;
+    private 'createdAt': string | null;
+
+    private 'updatedAt': string | null;
 
     private constructor({
         id,
@@ -24,6 +28,7 @@ class SuperheroEntity implements Entity {
         originDescription,
         superpowers,
         catchPhrase,
+        images = [],
         createdAt,
         updatedAt,
     }: {
@@ -33,6 +38,7 @@ class SuperheroEntity implements Entity {
         originDescription: string;
         superpowers: string;
         catchPhrase: string;
+        images?: ImageEntity[];
         createdAt?: string | null;
         updatedAt?: string | null;
     }) {
@@ -42,6 +48,7 @@ class SuperheroEntity implements Entity {
         this.originDescription = originDescription;
         this.superpowers = superpowers;
         this.catchPhrase = catchPhrase;
+        this.images = images;
         this.createdAt = createdAt || null;
         this.updatedAt = updatedAt || null;
     }
@@ -53,6 +60,7 @@ class SuperheroEntity implements Entity {
         originDescription,
         superpowers,
         catchPhrase,
+        images,
         createdAt,
         updatedAt,
     }: {
@@ -62,6 +70,7 @@ class SuperheroEntity implements Entity {
         originDescription: string;
         superpowers: string;
         catchPhrase: string;
+        images: ImageEntity[];
         createdAt: string;
         updatedAt: string;
     }): SuperheroEntity {
@@ -72,6 +81,7 @@ class SuperheroEntity implements Entity {
             originDescription,
             superpowers,
             catchPhrase,
+            images,
             createdAt,
             updatedAt,
         });
@@ -107,6 +117,10 @@ class SuperheroEntity implements Entity {
         originDescription: string;
         superpowers: string;
         catchPhrase: string;
+        images: {
+            id: number;
+            filename: string;
+        }[];
         createdAt: string;
         updatedAt: string;
     } {
@@ -117,6 +131,10 @@ class SuperheroEntity implements Entity {
             originDescription: this.originDescription,
             superpowers: this.superpowers,
             catchPhrase: this.catchPhrase,
+            images: this.images.map((image) => {
+                const { id, filename } = image.toObject();
+                return { id, filename };
+            }),
             createdAt: this.createdAt as string,
             updatedAt: this.updatedAt as string,
         };

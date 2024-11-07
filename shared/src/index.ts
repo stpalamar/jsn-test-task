@@ -4,6 +4,7 @@ export {
     type SuperheroResponseDto,
     superheroValidationSchema,
     updateSuperheroValidationSchema,
+    type UploadImageResponseDto,
 } from './bundles/superheroes/superheroes.js';
 export {
     ApiPath,
@@ -26,6 +27,7 @@ export {
 } from './framework/http/http.js';
 export { configureUrlString } from './helpers/helpers.js';
 export {
+    type File,
     type Paged,
     type PaginationParameters,
     type ServerCommonErrorResponse,
