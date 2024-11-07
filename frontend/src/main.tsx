@@ -6,6 +6,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import { App } from '~/app/app.js';
 import {
+    NotificationContainer,
     RouterProvider,
     StoreProvider,
 } from '~/common/components/components.js';
@@ -49,6 +50,7 @@ createRoot(document.querySelector('#root') as HTMLElement).render(
     <StrictMode>
         <StoreProvider store={store.instance}>
             <RouterProvider router={createBrowserRouter(routes)} />
+            <NotificationContainer />
         </StoreProvider>
     </StrictMode>,
 );
