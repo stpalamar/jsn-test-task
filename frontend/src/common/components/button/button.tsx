@@ -9,7 +9,7 @@ type Properties = {
     label: string;
     size: ValueOf<typeof ButtonSize>;
     variant: ValueOf<typeof ButtonVariant>;
-    type: ButtonType;
+    type?: ButtonType;
     className?: string;
     isDisabled?: boolean;
     leftIcon?: React.ReactNode;
@@ -20,9 +20,9 @@ const Button: React.FC<Properties> = ({
     label,
     size,
     variant,
-    type,
+    type = 'button',
     className,
-    isDisabled,
+    isDisabled = false,
     leftIcon,
     onClick,
 }) => {
@@ -33,9 +33,12 @@ const Button: React.FC<Properties> = ({
         ValueOf<typeof ButtonVariant>,
         string
     > = {
-        [ButtonVariant.PRIMARY]: 'bg-blue-500 text-white hover:bg-blue-600',
-        [ButtonVariant.DANGER]: 'bg-red-500 text-white hover:bg-red-600',
-        [ButtonVariant.SUCCESS]: 'bg-green-500 text-white hover:bg-green-600',
+        [ButtonVariant.PRIMARY]:
+            'bg-blue-500 text-white hover:bg-blue-600 disabled:bg-blue-300',
+        [ButtonVariant.DANGER]:
+            'bg-red-500 text-white hover:bg-red-600 disabled:bg-red-300',
+        [ButtonVariant.SUCCESS]:
+            'bg-green-500 text-white hover:bg-green-600 disabled:bg-green-300',
     };
 
     const buttonSizesToClasses: Record<ValueOf<typeof ButtonSize>, string> = {

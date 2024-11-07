@@ -6,5 +6,6 @@ export { ImagePicker } from './image-picker/image-picker.js';
 export { Input } from './input/input.js';
 export { Link } from './link/link.js';
 export { NotificationContainer } from './notification-container/notification-container.js';
+export { Pagination } from './pagination/pagination.js';
 export { Provider as StoreProvider } from 'react-redux';
 export { Outlet as RouterOutlet, RouterProvider } from 'react-router-dom';

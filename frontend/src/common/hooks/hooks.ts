@@ -5,3 +5,4 @@ export {
     useForm as useAppForm,
     useController as useFormController,
 } from 'react-hook-form';
+export { useSearchParams } from 'react-router-dom';
