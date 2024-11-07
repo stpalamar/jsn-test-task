@@ -17,7 +17,6 @@ type Constructor = {
     baseUrl: string;
     path: string;
     http: Http;
-    storage: Storage;
 };
 
 class BaseHttpApi implements HttpApi {

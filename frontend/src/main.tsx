@@ -13,6 +13,7 @@ import { store } from '~/framework/store/store.js';
 
 import { Landing } from './bundles/landing/pages/landing.js';
 import { CreateSuperHero } from './bundles/superheroes/pages/create-superhero.js';
+import { SuperheroesList } from './bundles/superheroes/pages/superheroes-list.js';
 import { AppRoute } from './common/enums/enums.js';
 
 const routes = [
@@ -26,7 +27,7 @@ const routes = [
             },
             {
                 path: AppRoute.SUPERHEROES,
-                element: <div>LIST OF SUPERHEROES</div>,
+                element: <SuperheroesList />,
             },
             {
                 path: AppRoute.SUPERHERO,
