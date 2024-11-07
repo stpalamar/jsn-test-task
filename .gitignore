@@ -9,3 +9,6 @@ build
 
 # misc
 .env
+
+# public
+public
