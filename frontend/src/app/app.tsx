@@ -1,5 +1,7 @@
+import { BaseLayout } from '~/common/components/components.js';
+
 const App: React.FC = () => {
-    return <div>Hello Vite + React!</div>;
+    return <BaseLayout />;
 };
 
 export { App };

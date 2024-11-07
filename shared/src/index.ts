@@ -9,6 +9,7 @@ export {
 export {
     ApiPath,
     AppEnvironment,
+    AppRoute,
     ContentType,
     ServerErrorType,
 } from './enums/enums.js';

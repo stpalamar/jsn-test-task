@@ -2,15 +2,50 @@ import '~/assets/css/styles.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { createBrowserRouter } from 'react-router-dom';
 
 import { App } from '~/app/app.js';
-import { StoreProvider } from '~/common/components/components.js';
+import {
+    RouterProvider,
+    StoreProvider,
+} from '~/common/components/components.js';
 import { store } from '~/framework/store/store.js';
+
+import { AppRoute } from './common/enums/enums.js';
+
+const routes = [
+    {
+        path: AppRoute.ROOT,
+        element: <App />,
+        children: [
+            {
+                path: AppRoute.ROOT,
+                element: <div>HELLO PAGE</div>,
+            },
+            {
+                path: AppRoute.SUPERHEROES,
+                element: <div>LIST OF SUPERHEROES</div>,
+            },
+            {
+                path: AppRoute.SUPERHERO,
+                element: <div>SUPERHERO DETAILS</div>,
+            },
+            {
+                path: AppRoute.CREATE,
+                element: <div>CREATE SUPERHERO</div>,
+            },
+            {
+                path: AppRoute.EDIT,
+                element: <div>EDIT SUPERHERO</div>,
+            },
+        ],
+    },
+];
 
 createRoot(document.querySelector('#root') as HTMLElement).render(
     <StrictMode>
         <StoreProvider store={store.instance}>
-            <App />
+            <RouterProvider router={createBrowserRouter(routes)} />
         </StoreProvider>
     </StrictMode>,
 );

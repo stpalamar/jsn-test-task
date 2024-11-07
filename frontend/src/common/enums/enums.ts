@@ -1,1 +1,1 @@
-export { AppEnvironment, ContentType, ServerErrorType } from 'shared';
+export { AppEnvironment, AppRoute, ContentType, ServerErrorType } from 'shared';
