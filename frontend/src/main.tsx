@@ -11,6 +11,7 @@ import {
 } from '~/common/components/components.js';
 import { store } from '~/framework/store/store.js';
 
+import { Landing } from './bundles/landing/pages/landing.js';
 import { AppRoute } from './common/enums/enums.js';
 
 const routes = [
@@ -20,7 +21,7 @@ const routes = [
         children: [
             {
                 path: AppRoute.ROOT,
-                element: <div>HELLO PAGE</div>,
+                element: <Landing />,
             },
             {
                 path: AppRoute.SUPERHEROES,
