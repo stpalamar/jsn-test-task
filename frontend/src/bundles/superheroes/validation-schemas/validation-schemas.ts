@@ -1,0 +1,1 @@
+export { superheroValidationSchema } from 'shared';

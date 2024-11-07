@@ -9,7 +9,7 @@ type Properties = {
 
 const Header: React.FC<Properties> = ({ navigationItems }) => {
     return (
-        <div className="grid bg-blue-400 py-4 text-white shadow-lg md:grid-cols-3 md:place-items-center md:justify-items-center">
+        <div className="mb-6 grid bg-blue-400 py-4 text-white shadow-lg md:grid-cols-3 md:place-items-center md:justify-items-center">
             <div className="flex items-center gap-8">
                 <div className="md:hidden">
                     <Bars3Icon className="ml-4 h-6 w-6" />
