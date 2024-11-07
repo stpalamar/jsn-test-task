@@ -5,6 +5,7 @@ export { Header } from './header/header.js';
 export { ImagePicker } from './image-picker/image-picker.js';
 export { Input } from './input/input.js';
 export { Link } from './link/link.js';
+export { Loader } from './loader/loader.js';
 export { NotificationContainer } from './notification-container/notification-container.js';
 export { Pagination } from './pagination/pagination.js';
 export { Provider as StoreProvider } from 'react-redux';
