@@ -13,11 +13,11 @@ const SuperheroValidationRule = {
     },
     SUPERPOWERS: {
         MIN_LENGTH: 3,
-        MAX_LENGTH: 100,
+        MAX_LENGTH: 250,
     },
     CATCH_PHRASE: {
         MIN_LENGTH: 3,
-        MAX_LENGTH: 100,
+        MAX_LENGTH: 250,
     },
 } as const;
 
