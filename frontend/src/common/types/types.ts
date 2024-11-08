@@ -10,5 +10,6 @@ export {
     type PaginationParameters,
     type ServerErrorDetail,
     type ServerErrorResponse,
+    type UploadImageResponseDto,
     type ValueOf,
 } from 'shared';

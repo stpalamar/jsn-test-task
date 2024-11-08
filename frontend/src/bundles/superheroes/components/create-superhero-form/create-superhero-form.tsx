@@ -1,8 +1,9 @@
+import { PencilIcon } from '@heroicons/react/16/solid';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { actions as superheroesActions } from '~/bundles/superheroes/store/superheroes.js';
 import { type SuperheroRequestDto } from '~/bundles/superheroes/types/types.js';
-import { superheroValidationSchema } from '~/bundles/superheroes/validation-schemas/validation-schemas.js';
 import {
     Button,
     ButtonSize,
@@ -10,30 +11,76 @@ import {
     ImagePicker,
     Input,
 } from '~/common/components/components.js';
-import { useAppForm, useCallback } from '~/common/hooks/hooks.js';
+import {
+    useAppDispatch,
+    useAppForm,
+    useCallback,
+} from '~/common/hooks/hooks.js';
 
 import { DEFAULT_CREATE_SUPERHERO_PAYLOAD } from './constants/constants.js';
+import { type CreateSuperheroPayload } from './types/types.js';
+import { createSuperheroValidationSchema } from './validation-schemas/validation-schemas.js';
 
 type Properties = {
     onSubmit: (payload: SuperheroRequestDto) => void;
+    isEdit?: boolean;
+    defaultValues?: CreateSuperheroPayload;
 };
 
-const CreateSuperheroForm: React.FC<Properties> = ({ onSubmit }) => {
+const CreateSuperheroForm: React.FC<Properties> = ({
+    onSubmit,
+    isEdit,
+    defaultValues,
+}) => {
+    const dispatch = useAppDispatch();
+
     const {
         control,
         formState: { errors },
+        setValue,
+        getValues,
         handleSubmit,
-    } = useAppForm<SuperheroRequestDto>({
-        resolver: zodResolver(superheroValidationSchema),
-        defaultValues: DEFAULT_CREATE_SUPERHERO_PAYLOAD,
+    } = useAppForm<CreateSuperheroPayload>({
+        resolver: zodResolver(createSuperheroValidationSchema),
+        defaultValues: defaultValues ?? DEFAULT_CREATE_SUPERHERO_PAYLOAD,
         mode: 'onTouched',
     });
 
     const handleFormSubmit = useCallback(
         (event_: React.BaseSyntheticEvent): void => {
-            void handleSubmit(onSubmit)(event_);
+            void handleSubmit(async (data) => {
+                const files = getValues('files');
+                if (files.length > 0) {
+                    await dispatch(superheroesActions.uploadImages(files))
+                        .unwrap()
+                        .then((result) => {
+                            const payload = {
+                                ...data,
+                                imageFilenames: result.map(
+                                    (image) => image.filename,
+                                ),
+                            };
+                            onSubmit(payload);
+                        });
+                }
+
+                if (files.length === 0) {
+                    const payload = {
+                        ...data,
+                        imageFilenames: [],
+                    };
+                    onSubmit(payload);
+                }
+            })(event_);
         },
-        [handleSubmit, onSubmit],
+        [handleSubmit, onSubmit, dispatch, getValues],
+    );
+
+    const handleUpload = useCallback(
+        (files: File[]) => {
+            setValue('files', files);
+        },
+        [setValue],
     );
 
     return (
@@ -79,13 +126,19 @@ const CreateSuperheroForm: React.FC<Properties> = ({ onSubmit }) => {
                 rows={4}
                 className="md:col-span-2"
             />
-            <ImagePicker className="md:col-span-2" />
+            <ImagePicker className="md:col-span-2" onUpload={handleUpload} />
             <Button
-                label="Create new"
+                label={isEdit ? 'Edit' : 'Create new'}
                 size={ButtonSize.MEDIUM}
                 variant={ButtonVariant.PRIMARY}
                 type="submit"
-                leftIcon={<PlusIcon className="size-6" />}
+                leftIcon={
+                    isEdit ? (
+                        <PencilIcon className="size-6" />
+                    ) : (
+                        <PlusIcon className="size-6" />
+                    )
+                }
                 className="mx-auto max-w-[18rem] md:col-span-2"
             />
         </form>

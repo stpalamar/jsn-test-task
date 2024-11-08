@@ -95,11 +95,11 @@ class SuperheroController extends BaseController {
         this.addRoute({
             path: SuperheroesApiPath.UPLOAD_IMAGE,
             method: 'POST',
-            preHandler: upload.single('file'),
+            preHandler: upload.array('files'),
             handler: (options) =>
                 this.uploadImage(
                     options as ApiHandlerOptions<{
-                        file: File;
+                        files: File[];
                     }>,
                 ),
         });
@@ -172,12 +172,14 @@ class SuperheroController extends BaseController {
     }
 
     private uploadImage(
-        options: ApiHandlerOptions<{ file: File }>,
+        options: ApiHandlerOptions<{ files: File[] }>,
     ): ApiHandlerResponse {
-        const { file } = options;
+        const { files } = options;
         return {
             status: HttpCode.OK,
-            payload: this.superheroService.uploadImage(file),
+            payload: files.map((file) =>
+                this.superheroService.uploadImage(file),
+            ),
         };
     }
 }

@@ -8,42 +8,54 @@ import { Button, ButtonSize, ButtonVariant } from '../components.js';
 
 type Properties = {
     className?: string;
+    onUpload: (file: File[]) => void;
+    files?: { file: File; url: string }[];
 };
 
-const ImagePicker: React.FC<Properties> = ({ className }) => {
+const ImagePicker: React.FC<Properties> = ({ className, onUpload }) => {
     const [selectedFiles, setSelectedFiles] = useState<
         { file: File; url: string }[]
     >([]);
 
-    const handleUpload = useCallback((files: File[]) => {
-        setSelectedFiles((previousState) => {
-            const fileMap = new Map(
-                previousState.map((file) => [file.file.name, file]),
-            );
-            const updatedFiles = files.map((file) => {
-                if (fileMap.has(file.name)) {
-                    const previousFile = fileMap.get(file.name);
-                    URL.revokeObjectURL(previousFile ? previousFile.url : '');
+    const handleUpload = useCallback(
+        (files: File[]) => {
+            setSelectedFiles((previousState) => {
+                const fileMap = new Map(
+                    previousState.map((file) => [file.file.name, file]),
+                );
+                const updatedFiles = files.map((file) => {
+                    if (fileMap.has(file.name)) {
+                        const previousFile = fileMap.get(file.name);
+                        URL.revokeObjectURL(
+                            previousFile ? previousFile.url : '',
+                        );
+                        return {
+                            file,
+                            url: URL.createObjectURL(file),
+                        };
+                    }
+
                     return {
                         file,
                         url: URL.createObjectURL(file),
                     };
-                }
+                });
 
-                return {
-                    file,
-                    url: URL.createObjectURL(file),
-                };
+                const previousFiles = previousState.filter(
+                    (file) =>
+                        !files.some(
+                            (newFile) => newFile.name === file.file.name,
+                        ),
+                );
+
+                const newFiles = [...previousFiles, ...updatedFiles];
+
+                onUpload(newFiles.map((file) => file.file));
+                return newFiles;
             });
-
-            const previousFiles = previousState.filter(
-                (file) =>
-                    !files.some((newFile) => newFile.name === file.file.name),
-            );
-
-            return [...previousFiles, ...updatedFiles];
-        });
-    }, []);
+        },
+        [onUpload],
+    );
 
     const removeImage = useCallback((file: { file: File; url: string }) => {
         setSelectedFiles((previousState) =>
@@ -68,7 +80,7 @@ const ImagePicker: React.FC<Properties> = ({ className }) => {
             <div className="min-h-[12rem]">
                 <p className="text-lg">To Upload</p>
                 {selectedFiles.length > 0 && selectedFiles ? (
-                    <div className="grid auto-rows-max grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    <div className="grid auto-rows-max grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
                         {selectedFiles.map((file, index) => {
                             return (
                                 <div

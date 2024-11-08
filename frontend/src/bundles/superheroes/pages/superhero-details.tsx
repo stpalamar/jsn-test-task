@@ -65,6 +65,12 @@ const SuperheroDetails: React.FC = () => {
         navigate(AppRoute.ROOT);
     }, [dispatch, id, navigate]);
 
+    const handleClickEdit = useCallback(() => {
+        if (id && !Number.isNaN(Number(id))) {
+            navigate(AppRoute.EDIT.replace(':id', id));
+        }
+    }, [id, navigate]);
+
     const propertyStyle = 'text-gray-500 font-semibold';
     const valueStyle = 'text-lg max-w-[32rem]';
 
@@ -132,6 +138,7 @@ const SuperheroDetails: React.FC = () => {
                                     size={ButtonSize.MEDIUM}
                                     leftIcon={<PencilIcon className="size-6" />}
                                     className="max-w-[10rem]"
+                                    onClick={handleClickEdit}
                                 />
                                 <Button
                                     label="Delete"

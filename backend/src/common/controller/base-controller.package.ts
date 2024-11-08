@@ -57,7 +57,7 @@ class BaseController implements Controller {
     ): ApiHandlerOptions {
         const {
             body,
-            file,
+            files,
             query,
             params,
             headers: { origin },
@@ -65,7 +65,7 @@ class BaseController implements Controller {
 
         return {
             body,
-            file,
+            files,
             query,
             params,
             origin,

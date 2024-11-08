@@ -10,6 +10,7 @@ import {
     getSuperheroById,
     getSuperheroes,
     updateSuperhero,
+    uploadImages,
 } from './actions.js';
 
 type State = {
@@ -90,6 +91,15 @@ const { reducer, actions, name } = createSlice({
             }
         });
         builder.addCase(deleteSuperhero.rejected, (state) => {
+            state.dataStatus = DataStatus.REJECTED;
+        });
+        builder.addCase(uploadImages.pending, (state) => {
+            state.dataStatus = DataStatus.PENDING;
+        });
+        builder.addCase(uploadImages.fulfilled, (state) => {
+            state.dataStatus = DataStatus.FULFILLED;
+        });
+        builder.addCase(uploadImages.rejected, (state) => {
             state.dataStatus = DataStatus.REJECTED;
         });
     },

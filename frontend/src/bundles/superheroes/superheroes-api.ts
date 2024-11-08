@@ -1,5 +1,9 @@
 import { ApiPath, ContentType } from '~/common/enums/enums.js';
-import { type Paged, type PaginationParameters } from '~/common/types/types.js';
+import {
+    type Paged,
+    type PaginationParameters,
+    type UploadImageResponseDto,
+} from '~/common/types/types.js';
 import { type Http } from '~/framework/http/http.js';
 import { BaseHttpApi } from '~/framework/http-api/http-api.js';
 
@@ -90,6 +94,26 @@ class SuperheroesApi extends BaseHttpApi {
         );
 
         return await response.json<boolean>();
+    }
+
+    public async uploadImages(
+        payload: File[],
+    ): Promise<UploadImageResponseDto[]> {
+        const formData = new FormData();
+
+        for (const file of payload) {
+            formData.append('files', file);
+        }
+
+        const response = await this.load(
+            this.getFullEndpoint(SuperheroesApiPath.UPLOAD_IMAGE, {}),
+            {
+                method: 'POST',
+                payload: formData,
+            },
+        );
+
+        return await response.json<UploadImageResponseDto[]>();
     }
 }
 

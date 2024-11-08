@@ -1,12 +1,26 @@
-import { useCallback } from '~/common/hooks/hooks.js';
+import { actions as superheroesActions } from '~/bundles/superheroes/store/superheroes.js';
+import {
+    useAppDispatch,
+    useCallback,
+    useNavigate,
+} from '~/common/hooks/hooks.js';
 
 import { CreateSuperheroForm } from '../components/components.js';
 import { type SuperheroRequestDto } from '../types/types.js';
 
 const CreateSuperHero: React.FC = () => {
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
     const handleCreateSuperhero = useCallback(
-        (_payload: SuperheroRequestDto): void => {},
-        [],
+        async (payload: SuperheroRequestDto): Promise<void> => {
+            await dispatch(superheroesActions.createSuperhero(payload))
+                .unwrap()
+                .then((result) => {
+                    navigate(`/superheroes/${result.id}`);
+                });
+        },
+        [dispatch, navigate],
     );
 
     return (

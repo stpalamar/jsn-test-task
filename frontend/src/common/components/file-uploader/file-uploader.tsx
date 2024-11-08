@@ -39,9 +39,6 @@ const FileUploader: React.FC<Properties> = ({
 
     return (
         <div className="flex flex-col items-center gap-2 border-4 border-dotted p-16">
-            <p className="font-semibold">
-                Drag and drop your files anywhere or
-            </p>
             <Button
                 label={buttonLabel}
                 variant={ButtonVariant.PRIMARY}

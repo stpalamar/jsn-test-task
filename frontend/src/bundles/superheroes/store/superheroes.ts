@@ -4,6 +4,7 @@ import {
     getSuperheroById,
     getSuperheroes,
     updateSuperhero,
+    uploadImages,
 } from './actions.js';
 import { actions } from './slice.js';
 
@@ -14,6 +15,7 @@ const allActions = {
     createSuperhero,
     updateSuperhero,
     deleteSuperhero,
+    uploadImages,
 };
 
 export { allActions as actions };

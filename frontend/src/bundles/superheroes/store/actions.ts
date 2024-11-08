@@ -4,6 +4,7 @@ import {
     type AsyncThunkConfig,
     type Paged,
     type PaginationParameters,
+    type UploadImageResponseDto,
 } from '~/common/types/types.js';
 
 import {
@@ -59,10 +60,20 @@ const deleteSuperhero = createAsyncThunk<boolean, number, AsyncThunkConfig>(
     },
 );
 
+const uploadImages = createAsyncThunk<
+    UploadImageResponseDto[],
+    File[],
+    AsyncThunkConfig
+>(`${sliceName}/upload-images`, async (payload, { extra }) => {
+    const { superheroesApi } = extra;
+    return await superheroesApi.uploadImages(payload);
+});
+
 export {
     createSuperhero,
     deleteSuperhero,
     getSuperheroById,
     getSuperheroes,
     updateSuperhero,
+    uploadImages,
 };
