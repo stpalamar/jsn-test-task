@@ -174,14 +174,12 @@ class SuperheroService implements Service {
 
         const superhero = item.toObject();
 
-        await Promise.all(
-            superhero.images.map(
-                async () =>
-                    await this.imageRepository.delete({
-                        superheroId: superhero.id,
-                    }),
-            ),
-        );
+        for (const image of superhero.images) {
+            await this.imageRepository.delete({
+                filename: image.filename,
+                superheroId: superhero.id,
+            });
+        }
 
         return this.superheroRepository.delete(query);
     }
@@ -211,14 +209,12 @@ class SuperheroService implements Service {
             (filename) => !newFilenames.includes(filename),
         );
 
-        await Promise.all(
-            imagesToDelete.map(async (filename) => {
-                await this.imageRepository.delete({
-                    filename: filename,
-                    superheroId: superheroId,
-                });
-            }),
-        );
+        for (const filename of imagesToDelete) {
+            await this.imageRepository.delete({
+                filename: filename,
+                superheroId: superheroId,
+            });
+        }
     }
 
     private serializeImages(superhero: SuperheroEntity): SuperheroResponseDto {
