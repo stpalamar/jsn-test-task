@@ -92,7 +92,9 @@ class ImageRepository implements Repository {
             return false;
         }
 
-        this.fileService.removeLocalFile(image.filename);
+        this.fileService.removeLocalFile(
+            ImageEntity.initialize(image).toObject().filename,
+        );
 
         return (await this.imageModel.query().delete().where(query).execute())
             ? true

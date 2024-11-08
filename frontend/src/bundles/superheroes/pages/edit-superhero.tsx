@@ -10,7 +10,7 @@ import {
     useParams,
 } from '~/common/hooks/hooks.js';
 
-import { CreateSuperheroForm } from '../components/components.js';
+import { EditSuperheroForm } from '../components/edit-superhero-form/edit-superhero-form.js';
 import { type SuperheroRequestDto } from '../types/types.js';
 
 const EditSuperHero: React.FC = () => {
@@ -58,9 +58,8 @@ const EditSuperHero: React.FC = () => {
                         Edit the superhero!
                     </h2>
 
-                    <CreateSuperheroForm
+                    <EditSuperheroForm
                         onSubmit={handleEditSuperhero}
-                        isEdit
                         defaultValues={{ ...superhero, files: [] }}
                     />
                 </div>

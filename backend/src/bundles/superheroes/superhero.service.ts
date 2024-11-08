@@ -126,6 +126,7 @@ class SuperheroService implements Service {
         }
 
         const superhero = item.toObject();
+
         await this.clearImages(
             superhero.id,
             superhero.images.map((image) => image.filename),

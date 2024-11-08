@@ -1,18 +1,22 @@
-import { TrashIcon } from '@heroicons/react/16/solid';
-
 import { FileUploader } from '~/common/components/components.js';
 import { getValidClassNames } from '~/common/helpers/helpers.js';
 import { useCallback, useState } from '~/common/hooks/hooks.js';
 
-import { Button, ButtonSize, ButtonVariant } from '../components.js';
+import { ImagePreview } from './components/components.js';
 
 type Properties = {
     className?: string;
     onUpload: (file: File[]) => void;
-    files?: { file: File; url: string }[];
+    imageUrls?: string[];
+    onRemoveImageUrl?: (url: string) => void;
 };
 
-const ImagePicker: React.FC<Properties> = ({ className, onUpload }) => {
+const ImagePicker: React.FC<Properties> = ({
+    className,
+    onUpload,
+    imageUrls,
+    onRemoveImageUrl,
+}) => {
     const [selectedFiles, setSelectedFiles] = useState<
         { file: File; url: string }[]
     >([]);
@@ -70,6 +74,15 @@ const ImagePicker: React.FC<Properties> = ({ className, onUpload }) => {
         );
     }, []);
 
+    const removeImageUrl = useCallback(
+        (url: string) => {
+            if (onRemoveImageUrl) {
+                onRemoveImageUrl(url);
+            }
+        },
+        [onRemoveImageUrl],
+    );
+
     return (
         <div className={getValidClassNames(className, 'flex flex-col gap-4')}>
             <FileUploader
@@ -79,40 +92,31 @@ const ImagePicker: React.FC<Properties> = ({ className, onUpload }) => {
             />
             <div className="min-h-[12rem]">
                 <p className="text-lg">To Upload</p>
-                {selectedFiles.length > 0 && selectedFiles ? (
+                {selectedFiles.length > 0 ||
+                (imageUrls && imageUrls.length > 0) ? (
                     <div className="grid auto-rows-max grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-                        {selectedFiles.map((file, index) => {
-                            return (
-                                <div
-                                    key={index}
-                                    className="relative h-[8rem] w-[12rem] cursor-pointer rounded-md bg-gray-200 text-transparent shadow-md hover:text-white"
-                                >
-                                    <img
+                        {selectedFiles.length > 0 &&
+                            selectedFiles &&
+                            selectedFiles.map((file, index) => {
+                                return (
+                                    <ImagePreview
+                                        key={index}
                                         src={file.url}
-                                        alt="Uploaded preview"
-                                        className="img-preview sticky h-full w-full rounded-md object-cover"
+                                        onDrop={() => removeImage(file)}
                                     />
-                                    <div className="absolute top-0 z-20 flex h-full w-full flex-col break-words rounded-md px-3 py-2 text-xs">
-                                        <p className="font-semibold">
-                                            {file.file.name}
-                                        </p>
-                                    </div>
-                                    <div className="absolute top-0 z-20 flex h-full w-full flex-col items-end justify-end break-words rounded-md px-3 py-2 text-xs">
-                                        <Button
-                                            size={ButtonSize.ICON}
-                                            variant={ButtonVariant.DANGER}
-                                            label=""
-                                            onClick={() => removeImage(file)}
-                                            type="button"
-                                            leftIcon={
-                                                <TrashIcon className="size-4" />
-                                            }
-                                            className="max-w-[2rem]"
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        {imageUrls &&
+                            imageUrls.length > 0 &&
+                            imageUrls.map((url, index) => {
+                                return (
+                                    <ImagePreview
+                                        key={index}
+                                        src={url}
+                                        onDrop={() => removeImageUrl(url)}
+                                    />
+                                );
+                            })}
                     </div>
                 ) : (
                     <div className="mt-8 flex h-full w-full justify-center">

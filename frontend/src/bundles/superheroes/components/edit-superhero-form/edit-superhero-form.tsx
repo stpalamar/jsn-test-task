@@ -1,4 +1,4 @@
-import { PlusIcon } from '@heroicons/react/24/solid';
+import { PencilIcon } from '@heroicons/react/16/solid';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { actions as superheroesActions } from '~/bundles/superheroes/store/superheroes.js';
@@ -10,21 +10,25 @@ import {
     ImagePicker,
     Input,
 } from '~/common/components/components.js';
+import { getFilenameFromUrl } from '~/common/helpers/get-filename-from-url.helper.js';
 import {
     useAppDispatch,
     useAppForm,
     useCallback,
 } from '~/common/hooks/hooks.js';
 
-import { DEFAULT_CREATE_SUPERHERO_PAYLOAD } from './constants/constants.js';
-import { type CreateSuperheroPayload } from './types/types.js';
-import { createSuperheroValidationSchema } from './validation-schemas/validation-schemas.js';
+import { type EditSuperheroPayload } from './types/types.js';
+import { editSuperheroValidationSchema } from './validation-schemas/validation-schemas.js';
 
 type Properties = {
     onSubmit: (payload: SuperheroRequestDto) => void;
+    defaultValues: EditSuperheroPayload;
 };
 
-const CreateSuperheroForm: React.FC<Properties> = ({ onSubmit }) => {
+const EditSuperheroForm: React.FC<Properties> = ({
+    onSubmit,
+    defaultValues,
+}) => {
     const dispatch = useAppDispatch();
 
     const {
@@ -33,9 +37,10 @@ const CreateSuperheroForm: React.FC<Properties> = ({ onSubmit }) => {
         setValue,
         getValues,
         handleSubmit,
-    } = useAppForm<CreateSuperheroPayload>({
-        resolver: zodResolver(createSuperheroValidationSchema),
-        defaultValues: DEFAULT_CREATE_SUPERHERO_PAYLOAD,
+        trigger,
+    } = useAppForm<EditSuperheroPayload>({
+        resolver: zodResolver(editSuperheroValidationSchema),
+        defaultValues: defaultValues,
         mode: 'onTouched',
     });
 
@@ -43,21 +48,35 @@ const CreateSuperheroForm: React.FC<Properties> = ({ onSubmit }) => {
         (event_: React.BaseSyntheticEvent): void => {
             void handleSubmit(async (data) => {
                 const files = getValues('files');
+
+                const imageFilenames = data.imageUrls.map((url) =>
+                    getFilenameFromUrl(url),
+                );
+
                 if (files.length > 0) {
                     await dispatch(superheroesActions.uploadImages(files))
                         .unwrap()
                         .then((result) => {
                             const payload = {
                                 ...data,
-                                imageFilenames: result.map(
-                                    (image) => image.filename,
-                                ),
+                                imageFilenames: [
+                                    ...result.map((image) => image.filename),
+                                    ...imageFilenames,
+                                ],
                             };
                             onSubmit(payload);
                         });
                 }
 
-                if (files.length === 0) {
+                if (files.length === 0 && data.imageUrls.length > 0) {
+                    const payload = {
+                        ...data,
+                        imageFilenames: imageFilenames,
+                    };
+                    onSubmit(payload);
+                }
+
+                if (files.length === 0 && data.imageUrls.length === 0) {
                     const payload = {
                         ...data,
                         imageFilenames: [],
@@ -74,6 +93,18 @@ const CreateSuperheroForm: React.FC<Properties> = ({ onSubmit }) => {
             setValue('files', files);
         },
         [setValue],
+    );
+
+    const onRemoveImageUrl = useCallback(
+        (url: string) => {
+            const imageUrls = getValues('imageUrls');
+            setValue(
+                'imageUrls',
+                imageUrls.filter((imageUrl) => imageUrl !== url),
+            );
+            void trigger('imageUrls');
+        },
+        [getValues, setValue, trigger],
     );
 
     return (
@@ -119,17 +150,22 @@ const CreateSuperheroForm: React.FC<Properties> = ({ onSubmit }) => {
                 rows={4}
                 className="md:col-span-2"
             />
-            <ImagePicker className="md:col-span-2" onUpload={handleUpload} />
+            <ImagePicker
+                className="md:col-span-2"
+                onUpload={handleUpload}
+                imageUrls={getValues('imageUrls')}
+                onRemoveImageUrl={onRemoveImageUrl}
+            />
             <Button
-                label={'Create new'}
+                label="Edit"
                 size={ButtonSize.MEDIUM}
                 variant={ButtonVariant.PRIMARY}
                 type="submit"
-                leftIcon={<PlusIcon className="size-6" />}
+                leftIcon={<PencilIcon className="size-6" />}
                 className="mx-auto max-w-[18rem] md:col-span-2"
             />
         </form>
     );
 };
 
-export { CreateSuperheroForm };
+export { EditSuperheroForm };
